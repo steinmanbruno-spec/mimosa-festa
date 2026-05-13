@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mimosa — A Festa</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --laranja:        #F28C1E;
+    --laranja-vivo:   #FF6B00;
+    --laranja-claro:  #FFD28A;
+    --amarelo:        #FFE14D;
+    --rosa:           #FF8FA3;
+    --verde-limao:    #C5E84A;
+    --fundo:          #FFF8EE;
+    --fundo-alt:      #FFF0D6;
+    --fundo-card:     #FFFFFF;
+    --texto:          #1A0F00;
+    --texto-suave:    #7A5C38;
+    --borda:          rgba(242,140,30,0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--laranja-vivo);
+    border-radius: 50%;
+    position: fixed; pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+  }
+  .cursor-ring {
+    width: 32px; height: 32px;
+    border: 2px solid var(--laranja);
+    border-radius: 50%;
+    position: fixed; pointer-events: none; z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: all 0.08s ease; opacity: 0.6;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 1000; opacity: 0.5;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at 75% 20%, rgba(255,225,77,0.35) 0%, transparent 55%),
+      radial-gradient(ellipse at 15% 75%, rgba(255,107,0,0.15) 0%, transparent 50%),
+      linear-gradient(160deg, #FFF8EE 0%, #FFE8C0 100%);
+    position: relative;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 6vw 7vh;
+    overflow: hidden;
+  }
+
+  .blob {
+    position: absolute; border-radius: 50%;
+    filter: blur(60px); pointer-events: none; opacity: 0.45;
+  }
+  .blob-1 { width: 340px; height: 340px; background: var(--amarelo);       top: -80px;  right: 5%; }
+  .blob-2 { width: 260px; height: 260px; background: var(--laranja-claro);  bottom: 10%; left: -60px; }
+  .blob-3 { width: 180px; height: 180px; background: var(--rosa);           top: 30%;    right: 20%; opacity: 0.25; }
+
+  .logo {
+    position: absolute; top: 5vh; left: 6vw;
+    font-family: 'Permanent Marker', cursive;
+    font-size: clamp(26px, 3.5vw, 48px);
+    color: var(--laranja-vivo); line-height: 1; z-index: 10;
+    animation: fadeDown 0.7s ease both;
+  }
+  .logo span { display: block; }
+
+  .badge-data {
+    position: absolute; top: 5vh; right: 6vw;
+    background: var(--laranja-vivo); color: #fff;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(13px, 1.5vw, 19px);
+    padding: 7px 18px; letter-spacing: 2px;
+    transform: rotate(2deg); z-index: 10;
+    animation: fadeDown 0.7s 0.15s ease both; opacity: 0;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.12);
+  }
+
+  .hero-headline {
+    position: relative; z-index: 10;
+    animation: fadeUp 0.9s 0.25s ease both; opacity: 0;
+  }
+  .hero-headline h1 {
+    font-family: 'Permanent Marker', cursive;
+    font-size: clamp(50px, 10.5vw, 148px);
+    line-height: 0.93;
+    color: var(--laranja-vivo);
+    text-shadow: 3px 3px 0 rgba(242,140,30,0.3);
+    letter-spacing: -1px;
+  }
+  .hero-headline h1 .dark { color: var(--texto); text-shadow: 2px 2px 0 rgba(0,0,0,0.08); }
+
+  .hero-sub {
+    margin-top: 28px;
+    display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+  }
+  .pill {
+    background: #fff;
+    border: 1.5px solid var(--laranja);
+    color: var(--laranja-vivo);
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 6px 16px; border-radius: 100px;
+    transition: all 0.2s;
+    box-shadow: 2px 2px 0 rgba(242,140,30,0.2);
+  }
+  .pill:hover { background: var(--laranja-vivo); color: #fff; border-color: var(--laranja-vivo); }
+
+  .scroll-hint {
+    position: absolute; bottom: 3vh; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    opacity: 0.45; animation: float 2s ease-in-out infinite; z-index: 10;
+    color: var(--texto-suave);
+  }
+  .scroll-hint span { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; }
+  .scroll-hint-line { width: 1px; height: 36px; background: var(--laranja); }
+
+  /* ===== SECTIONS ===== */
+  section { padding: clamp(64px,10vh,120px) 6vw; position: relative; }
+
+  .section-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px; letter-spacing: 5px;
+    color: var(--laranja); text-transform: uppercase;
+    margin-bottom: 16px; opacity: 0.7;
+  }
+  .section-title {
+    font-family: 'Permanent Marker', cursive;
+    font-size: clamp(34px, 5.5vw, 76px);
+    line-height: 1; color: var(--texto);
+  }
+  .section-title .accent { color: var(--laranja-vivo); }
+
+  /* ===== HORÁRIO ===== */
+  .horario-section {
+    background: var(--fundo-alt);
+    border-top: 1.5px solid var(--borda);
+    border-bottom: 1.5px solid var(--borda);
+  }
+  .timeline {
+    margin-top: 48px;
+    display: flex; flex-direction: column;
+    position: relative; max-width: 620px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 50px; top: 0; bottom: 0;
+    width: 1.5px;
+    background: linear-gradient(180deg, var(--laranja) 0%, transparent 100%);
+    opacity: 0.3;
+  }
+  .tl-item {
+    display: flex; align-items: flex-start; gap: 24px; padding: 18px 0;
+    opacity: 0; transform: translateX(-16px); transition: all 0.45s ease;
+  }
+  .tl-item.visible { opacity: 1; transform: none; }
+  .tl-time {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(26px, 3.5vw, 42px);
+    color: var(--laranja-vivo); min-width: 84px; line-height: 1;
+  }
+  .tl-dot {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--laranja-vivo); flex-shrink: 0; margin-top: 7px;
+    box-shadow: 0 0 10px rgba(242,140,30,0.45);
+  }
+  .tl-desc strong { display: block; font-size: 17px; font-weight: 600; color: var(--texto); margin-bottom: 3px; }
+  .tl-desc span   { font-size: 13px; color: var(--texto-suave); }
+
+  /* ===== VIBE ===== */
+  .vibe-section { background: var(--fundo); }
+  .vibe-grid {
+    margin-top: 48px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  .vibe-card {
+    background: var(--fundo-card);
+    border: 1.5px solid var(--borda);
+    padding: 32px 24px;
+    position: relative; overflow: hidden;
+    opacity: 0; transform: translateY(24px); transition: all 0.45s ease;
+    box-shadow: 0 2px 12px rgba(242,140,30,0.07);
+  }
+  .vibe-card.visible { opacity: 1; transform: none; }
+  .vibe-card:hover { box-shadow: 0 8px 28px rgba(242,140,30,0.18); transform: translateY(-4px); }
+  .vibe-card::after {
+    content: ''; position: absolute; bottom: 0; left: 0;
+    width: 0; height: 3px; background: var(--laranja-vivo);
+    transition: width 0.3s ease;
+  }
+  .vibe-card:hover::after { width: 100%; }
+  .vibe-emoji { font-size: 40px; display: block; margin-bottom: 14px; }
+  .vibe-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(20px, 2.5vw, 30px);
+    color: var(--laranja-vivo); letter-spacing: 1px; margin-bottom: 8px;
+  }
+  .vibe-card p { font-size: 14px; line-height: 1.65; color: var(--texto-suave); }
+
+  /* ===== DRINKS ===== */
+  .drinks-section {
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(255,225,77,0.2) 0%, transparent 60%),
+      var(--fundo-alt);
+  }
+  .drinks-row { margin-top: 48px; display: flex; gap: 20px; flex-wrap: wrap; }
+  .drink-card {
+    flex: 1 1 200px;
+    background: var(--fundo-card);
+    border: 1.5px solid var(--borda);
+    padding: 36px 22px; text-align: center;
+    position: relative; overflow: hidden;
+    opacity: 0; transform: scale(0.96);
+    transition: opacity 0.45s ease, transform 0.45s ease, box-shadow 0.3s;
+    box-shadow: 0 2px 10px rgba(242,140,30,0.07);
+  }
+  .drink-card.visible { opacity: 1; transform: scale(1); }
+  .drink-card:hover { box-shadow: 0 8px 32px rgba(242,140,30,0.2); transform: scale(1.04) !important; }
+  .drink-card:nth-child(1)::before { background: var(--laranja-claro); }
+  .drink-card:nth-child(2)::before { background: var(--amarelo); }
+  .drink-card:nth-child(3)::before { background: var(--verde-limao); }
+  .drink-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; }
+  .drink-icon { font-size: 50px; display: block; margin-bottom: 14px; }
+  .drink-card h3 {
+    font-family: 'Permanent Marker', cursive;
+    font-size: clamp(19px, 2.2vw, 26px);
+    color: var(--laranja-vivo); margin-bottom: 8px;
+  }
+  .drink-card p { font-size: 13px; color: var(--texto-suave); line-height: 1.65; }
+
+  /* ===== MÚSICA ===== */
+  .musica-section { background: var(--fundo); border-top: 1.5px solid var(--borda); }
+  .musica-inner {
+    margin-top: 48px;
+    display: flex; gap: 40px; align-items: center; flex-wrap: wrap;
+  }
+  .musica-text { flex: 1 1 280px; }
+  .musica-text p {
+    font-size: clamp(17px, 2.2vw, 24px);
+    line-height: 1.65; color: var(--texto-suave); font-weight: 300;
+  }
+  .musica-text p strong { color: var(--laranja-vivo); font-weight: 600; }
+  .musica-tags { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 10px; }
+  .tag {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px; letter-spacing: 2px;
+    color: var(--texto); padding: 5px 16px;
+    transition: all 0.2s; border: 1.5px solid transparent;
+  }
+  .tag:nth-child(odd)  { background: var(--amarelo); }
+  .tag:nth-child(even) { background: var(--laranja-claro); }
+  .tag:hover { transform: rotate(-1.5deg) scale(1.05); border-color: var(--laranja-vivo); }
+
+  .vinyl {
+    flex: 0 0 auto;
+    width: clamp(130px, 18vw, 200px);
+    height: clamp(130px, 18vw, 200px);
+    border-radius: 50%;
+    background: radial-gradient(circle at center, #3A2E25 20%, #5C4830 40%, #3A2E25 55%, #7A6040 100%);
+    border: 4px solid var(--laranja-claro);
+    display: flex; align-items: center; justify-content: center;
+    animation: spin 10s linear infinite;
+    box-shadow: 0 8px 32px rgba(242,140,30,0.25);
+  }
+  .vinyl::after {
+    content: ''; width: 28%; height: 28%;
+    border-radius: 50%; background: var(--laranja-claro);
+    box-shadow: 0 0 12px var(--laranja);
+  }
+
+  /* ===== SUGESTÕES ===== */
+  .form-section { background: var(--fundo-alt); border-top: 1.5px solid var(--borda); }
+  .form-wrap { margin-top: 48px; max-width: 580px; }
+  .form-row { margin-bottom: 22px; }
+  .form-row label {
+    display: block; font-size: 10px; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--laranja-vivo);
+    margin-bottom: 8px; font-weight: 600;
+  }
+  .form-row input,
+  .form-row textarea {
+    width: 100%; background: var(--fundo-card);
+    border: 1.5px solid var(--borda);
+    color: var(--texto);
+    font-family: 'Space Grotesk', sans-serif; font-size: 15px;
+    padding: 12px 14px; outline: none; resize: none;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    border-radius: 2px;
+  }
+  .form-row input:focus,
+  .form-row textarea:focus {
+    border-color: var(--laranja);
+    box-shadow: 0 0 0 3px rgba(242,140,30,0.12);
+  }
+  .form-row input::placeholder,
+  .form-row textarea::placeholder { color: rgba(122,92,56,0.4); }
+
+  .btn-send {
+    display: inline-block; margin-top: 8px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px; letter-spacing: 3px;
+    color: #fff; background: var(--laranja-vivo);
+    border: none; padding: 15px 48px; cursor: none;
+    position: relative; overflow: hidden;
+    transition: transform 0.15s; border-radius: 2px;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.12);
+  }
+  .btn-send::after {
+    content: ''; position: absolute; inset: 0;
+    background: var(--laranja); transform: scaleX(0);
+    transform-origin: left; transition: transform 0.25s ease;
+  }
+  .btn-send:hover::after { transform: scaleX(1); }
+  .btn-send span { position: relative; z-index: 1; }
+  .btn-send:active { transform: scale(0.97); }
+
+  .success-msg {
+    display: none; margin-top: 20px;
+    font-family: 'Permanent Marker', cursive;
+    font-size: 22px; color: var(--laranja-vivo);
+    animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    padding: 36px 6vw;
+    border-top: 1.5px solid var(--borda);
+    display: flex; justify-content: space-between;
+    align-items: center; flex-wrap: wrap; gap: 12px;
+    background: var(--fundo);
+  }
+  footer .f-logo { font-family: 'Permanent Marker', cursive; font-size: 26px; color: var(--laranja-vivo); }
+  footer p { font-size: 12px; color: var(--texto-suave); letter-spacing: 1px; }
+
+  @keyframes fadeUp   { from { opacity:0; transform:translateY(36px); } to { opacity:1; transform:none; } }
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-18px); } to { opacity:1; transform:none; } }
+  @keyframes float    { 0%,100%{ transform:translateX(-50%) translateY(0); } 50%{ transform:translateX(-50%) translateY(-8px); } }
+  @keyframes spin     { to { transform:rotate(360deg); } }
+  @keyframes pop      { from { opacity:0; transform:scale(0.8); } to { opacity:1; transform:scale(1); } }
+
+  @media (max-width: 660px) {
+    .vibe-grid    { grid-template-columns: 1fr; }
+    .drinks-row   { flex-direction: column; }
+    .musica-inner { flex-direction: column-reverse; align-items: center; }
+    .timeline::before { left: 44px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<section class="hero">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="logo"><span>mi</span><span>mo</span><span>sa</span></div>
+  <div class="badge-data">19 · 05 · 2026 — dos que curtem</div>
+  <div class="hero-headline">
+    <h1>Teremos<br><span class="dark">drinks pra</span><br>todos os<br>gostos</h1>
+    <div class="hero-sub">
+      <span class="pill">16h às 2h</span>
+      <span class="pill">Pagode ao vivo</span>
+      <span class="pill">Caipirinha</span>
+      <span class="pill">Funk das antigas</span>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>rola pra baixo</span>
+    <div class="scroll-hint-line"></div>
+  </div>
+</section>
+
+<section class="horario-section" id="horario">
+  <div class="section-label">// programação</div>
+  <div class="section-title">A <span class="accent">tarde</span><br>toda é sua</div>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-time">16H</div><div class="tl-dot"></div><div class="tl-desc"><strong>Abertura das portas</strong><span>Chega cedo e já garante o seu canto</span></div></div>
+    <div class="tl-item"><div class="tl-time">17H</div><div class="tl-dot"></div><div class="tl-desc"><strong>Primeiro drink na mão</strong><span>Caipirinha, mimosa, cajuína — escolha a sua arma</span></div></div>
+    <div class="tl-item"><div class="tl-time">19H</div><div class="tl-dot"></div><div class="tl-desc"><strong>Pagode ao vivo começa</strong><span>Brasilidades, suingue e muito gostoso</span></div></div>
+    <div class="tl-item"><div class="tl-time">22H</div><div class="tl-dot"></div><div class="tl-desc"><strong>Funk das antigas entra na festa</strong><span>Os clássicos animados que todo mundo sabe de cor</span></div></div>
+    <div class="tl-item"><div class="tl-time">2H</div><div class="tl-dot"></div><div class="tl-desc"><strong>Fim — ou não</strong><span>Quem aguentar, fica</span></div></div>
+  </div>
+</section>
+
+<section class="vibe-section" id="vibe">
+  <div class="section-label">// a vibe</div>
+  <div class="section-title">Do seu<br><span class="accent">jeito</span></div>
+  <div class="vibe-grid">
+    <div class="vibe-card"><span class="vibe-emoji">🎂</span><h3>Aniversário</h3><p>É festa de verdade. Vem com a energia boa, sem cerimônia.</p></div>
+    <div class="vibe-card"><span class="vibe-emoji">👟</span><h3>À vontade</h3><p>Vem como quiser — confortável, estiloso ou os dois. Sem dress code chato.</p></div>
+    <div class="vibe-card"><span class="vibe-emoji">🤝</span><h3>Gente boa</h3><p>Só gente legal, boa conversa e muita risada. Assim tem que ser.</p></div>
+  </div>
+</section>
+
+<section class="drinks-section" id="drinks">
+  <div class="section-label">// o bar</div>
+  <div class="section-title">Tô<br><span class="accent">sedento</span></div>
+  <div class="drinks-row">
+    <div class="drink-card"><span class="drink-icon">🍋</span><h3>Caipirinha</h3><p>Limão, cachaça e muito gelo. A clássica que nunca decepciona.</p></div>
+    <div class="drink-card"><span class="drink-icon">🍊</span><h3>Mimosa</h3><p>Suco de laranja + espumante. Leve, elegante, perfeito pra tarde.</p></div>
+    <div class="drink-card"><span class="drink-icon">🥤</span><h3>Cajuína</h3><p>O drink do Brasil profundo. Pra quem quer se refrescar sem exagero.</p></div>
+  </div>
+</section>
+
+<section class="musica-section" id="musica">
+  <div class="section-label">// o som</div>
+  <div class="section-title"><span class="accent">Brasilidade</span><br>pura</div>
+  <div class="musica-inner">
+    <div class="musica-text">
+      <p>Começa com <strong>pagode ao vivo</strong> pra aquecer o coração.<br>No meio, entra as <strong>brasilidades</strong> que fazem todo mundo cantar.<br>Quando a noite esquentar: <strong>funk das antigas</strong>, os animados mesmo,<br>aquele que faz levantar da cadeira.</p>
+      <div class="musica-tags">
+        <span class="tag">Pagode ao vivo</span>
+        <span class="tag">MPB</span>
+        <span class="tag">Samba</span>
+        <span class="tag">Funk clássico</span>
+        <span class="tag">Axé</span>
+        <span class="tag">Brasilidades</span>
+      </div>
+    </div>
+    <div class="vinyl"></div>
+  </div>
+</section>
+
+<section class="form-section" id="sugestoes">
+  <div class="section-label">// fala aí</div>
+  <div class="section-title">Qual música<br><span class="accent">não pode</span><br>faltar?</div>
+  <div class="form-wrap">
+    <div class="form-row"><label>Seu nome</label><input type="text" placeholder="Como te chamam?" id="input-nome"></div>
+    <div class="form-row"><label>Música / Pedido</label><textarea rows="3" placeholder="Qual é o hit que você quer ouvir?" id="input-musica"></textarea></div>
+    <div class="form-row"><label>Mensagem pro aniversariante (opcional)</label><textarea rows="3" placeholder="Manda uma mensagem..." id="input-msg"></textarea></div>
+    <button class="btn-send" onclick="enviar()"><span>Mandar sugestão →</span></button>
+    <div class="success-msg" id="success">🎉 chegou! a gente toca isso aí!</div>
+  </div>
+</section>
+
+<footer>
+  <div class="f-logo">mimosa</div>
+  <p>Feito com caipirinha na mão · 2026</p>
+</footer>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  const ring   = document.getElementById('cursorRing');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+    setTimeout(() => { ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px'; }, 80);
+  });
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.tl-item, .vibe-card, .drink-card').forEach(el => obs.observe(el));
+  document.querySelectorAll('.tl-item').forEach((el,i)   => el.style.transitionDelay = i*0.1  + 's');
+  document.querySelectorAll('.vibe-card').forEach((el,i)  => el.style.transitionDelay = i*0.12 + 's');
+  document.querySelectorAll('.drink-card').forEach((el,i) => el.style.transitionDelay = i*0.12 + 's');
+
+  function enviar() {
+    const nome   = document.getElementById('input-nome').value.trim();
+    const musica = document.getElementById('input-musica').value.trim();
+    if (!nome || !musica) { alert('Coloca pelo menos seu nome e a música!'); return; }
+    document.getElementById('success').style.display = 'block';
+    document.getElementById('input-nome').value = '';
+    document.getElementById('input-musica').value = '';
+    document.getElementById('input-msg').value = '';
+  }
+</script>
+</body>
+</html>
